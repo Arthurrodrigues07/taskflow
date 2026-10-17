@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#f8fafc">
+<meta name="description" content="TaskFlow - Gerenciador de projetos e tarefas.">
+<title>TaskFlow | Gerenciador de Projetos</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<a href="#" class="brand" data-page="dashboard">
+<span class="brand-icon">TF</span>
+<span>TaskFlow</span>
+</a>
+<button class="icon-btn sidebar-close" id="closeSidebar" aria-label="Fechar menu" type="button">&times;</button>
+</div>
+<nav class="sidebar-nav" aria-label="Navegação principal">
+<p class="nav-label">MENU PRINCIPAL</p>
+<button class="nav-item active" data-page="dashboard" type="button"><span class="nav-symbol">▦</span> Visão geral</button>
+<button class="nav-item" data-page="projects" type="button"><span class="nav-symbol">▤</span> Meus projetos</button>
+<button class="nav-item" data-page="tasks" type="button"><span class="nav-symbol">☷</span> Todas as tarefas</button>
+<p class="nav-label">SISTEMA</p>
+<button class="nav-item" data-page="settings" type="button"><span class="nav-symbol">⚙</span> Configurações</button>
+</nav>
+<div class="sidebar-footer">
+<div class="storage-info">
+<strong>Armazenamento local</strong>
+<p>Seus dados ficam salvos neste navegador.</p>
+</div>
+<span class="version">TaskFlow v1.0</span>
+</div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="main-area">
+<header class="topbar">
+<div class="topbar-left">
+<button class="icon-btn menu-toggle" id="openSidebar" aria-label="Abrir menu" type="button">☰</button>
+<div class="breadcrumb"><span>Workspace</span><span>/</span><strong id="breadcrumbTitle">Visão geral</strong></div>
+</div>
+<div class="topbar-right">
+<span class="local-badge"><span class="status-dot"></span> Dados locais</span>
+<button class="btn btn-primary" id="topNewProject" type="button">+ Novo projeto</button>
+</div>
+</header>
+<main class="content" id="mainContent">
+<section class="page active" id="page-dashboard">
+<div class="page-heading">
+<div><span class="eyebrow">PAINEL DE CONTROLE</span><h1>Visão geral</h1><p>Acompanhe seus projetos e o andamento das tarefas.</p></div>
+<button class="btn btn-outline" id="dashboardNewTask" type="button">+ Nova tarefa</button>
+</div>
+<div class="stats-grid">
+<article class="stat-card"><div class="stat-top"><span>Projetos ativos</span><span class="stat-icon">▤</span></div><strong id="statProjects">0</strong><small>Projetos cadastrados</small></article>
+<article class="stat-card"><div class="stat-top"><span>Total de tarefas</span><span class="stat-icon">☷</span></div><strong id="statTasks">0</strong><small>Tarefas registradas</small></article>
+<article class="stat-card"><div class="stat-top"><span>Em andamento</span><span class="stat-icon">◷</span></div><strong id="statProgress">0</strong><small>Tarefas em execução</small></article>
+<article class="stat-card"><div class="stat-top"><span>Concluídas</span><span class="stat-icon">✓</span></div><strong id="statCompleted">0</strong><small>Tarefas finalizadas</small></article>
+</div>
+<div class="dashboard-grid">
+<section class="panel">
+<div class="panel-heading"><div><h2>Progresso geral</h2><p>Desempenho de todas as tarefas</p></div></div>
+<div class="progress-summary"><strong id="overallPercentage">0%</strong><span>de conclusão</span></div>
+<div class="progress-track"><div class="progress-fill" id="overallProgress" style="width:0%"></div></div>
+<div class="progress-legend"><span><i class="legend-dot dot-todo"></i> A fazer: <b id="countTodo">0</b></span><span><i class="legend-dot dot-progress"></i> Em andamento: <b id="countProgress">0</b></span><span><i class="legend-dot dot-done"></i> Concluídas: <b id="countDone">0</b></span></div>
+</section>
+<section class="panel">
+<div class="panel-heading"><div><h2>Próximos prazos</h2><p>Tarefas com vencimento mais próximo</p></div></div>
+<div id="upcomingTasks" class="upcoming-list"><p class="empty-inline">Nenhuma tarefa com prazo definido.</p></div>
+</section>
+</div>
+<section class="panel section-panel">
+<div class="panel-heading"><div><h2>Projetos recentes</h2><p>Continue de onde parou</p></div><button class="text-btn" data-page="projects" type="button">Ver todos →</button></div>
+<div class="projects-grid" id="dashboardProjects"></div>
+</section>
+</section>
+<section class="page" id="page-projects">
+<div class="page-heading"><div><span class="eyebrow">ORGANIZAÇÃO</span><h1>Meus projetos</h1><p>Organize e acompanhe seus projetos em um só lugar.</p></div><button class="btn btn-primary" id="projectsNewProject" type="button">+ Criar projeto</button></div>
+<div class="toolbar"><div class="search-field"><span>⌕</span><input type="search" id="projectSearch" placeholder="Pesquisar projetos..." aria-label="Pesquisar projetos"></div><span class="results-count" id="projectsCount">0 projetos</span></div>
+<div class="projects-grid" id="projectsGrid"></div>
+</section>
+<section class="page" id="page-tasks">
+<div class="page-heading"><div><span class="eyebrow">PRODUTIVIDADE</span><h1>Todas as tarefas</h1><p>Gerencie as tarefas de todos os seus projetos.</p></div><button class="btn btn-primary" id="allTasksNew" type="button">+ Nova tarefa</button></div>
+<div class="toolbar task-toolbar">
+<div class="search-field"><span>⌕</span><input type="search" id="globalTaskSearch" placeholder="Pesquisar tarefas..." aria-label="Pesquisar tarefas"></div>
+<select id="globalStatusFilter" aria-label="Filtrar por status"><option value="all">Todos os status</option><option value="todo">A fazer</option><option value="progress">Em andamento</option><option value="done">Concluído</option></select>
+<select id="globalPriorityFilter" aria-label="Filtrar por prioridade"><option value="all">Todas as prioridades</option><option value="high">Alta</option><option value="medium">Média</option><option value="low">Baixa</option></select>
+<select id="globalSort" aria-label="Ordenar tarefas"><option value="recent">Mais recentes</option><option value="due">Prazo mais próximo</option><option value="priority">Prioridade</option></select>
+</div>
+<div class="panel table-panel"><div class="table-wrapper"><table class="task-table"><thead><tr><th>Tarefa</th><th>Projeto</th><th>Prioridade</th><th>Prazo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="globalTasksBody"></tbody></table></div></div>
+</section>
+<section class="page" id="page-project-detail">
+<div class="detail-header"><button class="back-btn" id="backToProjects" type="button">← Voltar aos projetos</button></div>
+<div class="page-heading project-heading">
+<div><span class="eyebrow">PROJETO</span><h1 id="detailProjectName">Nome do projeto</h1><p id="detailProjectDescription">Descrição do projeto</p></div>
+<div class="heading-actions"><button class="btn btn-outline" id="editCurrentProject" type="button">Editar projeto</button><button class="btn btn-primary" id="detailNewTask" type="button">+ Nova tarefa</button></div>
+</div>
+<div class="project-overview"><div><span>Progresso do projeto</span><strong id="detailProjectPercentage">0%</strong></div><div class="progress-track"><div class="progress-fill" id="detailProjectProgress" style="width:0%"></div></div><small id="detailTaskSummary">0 de 0 tarefas concluídas</small></div>
+<div class="toolbar task-toolbar">
+<div class="search-field"><span>⌕</span><input type="search" id="detailTaskSearch" placeholder="Pesquisar neste projeto..." aria-label="Pesquisar tarefas do projeto"></div>
+<select id="detailPriorityFilter" aria-label="Filtrar por prioridade"><option value="all">Todas as prioridades</option><option value="high">Alta</option><option value="medium">Média</option><option value="low">Baixa</option></select>
+<select id="detailSort" aria-label="Ordenar tarefas"><option value="recent">Mais recentes</option><option value="due">Prazo mais próximo</option><option value="priority">Prioridade</option></select>
+<div class="view-switch" role="group" aria-label="Visualização das tarefas"><button class="view-btn active" id="kanbanViewBtn" type="button">Kanban</button><button class="view-btn" id="listViewBtn" type="button">Lista</button></div>
+</div>
+<div class="kanban-board" id="kanbanBoard">
+<div class="kanban-column" data-status="todo"><div class="column-header"><h3><span class="column-dot todo-dot"></span>A fazer</h3><span class="column-count" id="kanbanTodoCount">0</span></div><div class="column-tasks" id="kanbanTodo"></div></div>
+<div class="kanban-column" data-status="progress"><div class="column-header"><h3><span class="column-dot progress-dot"></span>Em andamento</h3><span class="column-count" id="kanbanProgressCount">0</span></div><div class="column-tasks" id="kanbanProgress"></div></div>
+<div class="kanban-column" data-status="done"><div class="column-header"><h3><span class="column-dot done-dot"></span>Concluído</h3><span class="column-count" id="kanbanDoneCount">0</span></div><div class="column-tasks" id="kanbanDone"></div></div>
+</div>
+<div class="panel table-panel hidden" id="projectListView"><div class="table-wrapper"><table class="task-table"><thead><tr><th>Tarefa</th><th>Prioridade</th><th>Prazo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="projectTasksBody"></tbody></table></div></div>
+</section>
+<section class="page" id="page-settings">
+<div class="page-heading"><div><span class="eyebrow">PREFERÊNCIAS</span><h1>Configurações</h1><p>Gerencie o armazenamento e os dados do TaskFlow.</p></div></div>
+<div class="settings-grid">
+<article class="panel settings-card"><div class="settings-icon">↓</div><h2>Exportar backup</h2><p>Baixe um arquivo JSON com seus projetos e tarefas para guardar uma cópia dos dados.</p><button class="btn btn-primary" id="exportBackup" type="button">Exportar dados</button></article>
+<article class="panel settings-card"><div class="settings-icon">↑</div><h2>Importar backup</h2><p>Restaure seus dados usando um arquivo JSON válido. A importação substituirá os dados atuais após confirmação.</p><button class="btn btn-outline" id="importBackup" type="button">Selecionar arquivo</button><input type="file" id="backupFile" accept=".json,application/json" hidden></article>
+</div>
+<div class="panel info-panel"><h2>Privacidade e armazenamento</h2><p>O TaskFlow salva os dados localmente neste navegador. Não é necessário criar uma conta e nenhuma informação é enviada para um servidor pelo aplicativo. Limpar os dados do navegador pode apagar seus projetos e tarefas. Exporte backups regularmente.</p></div>
+</section>
+</main>
+</div>
+</div>
+<div class="modal-backdrop hidden" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+<div class="modal">
+<div class="modal-header"><div><h2 id="projectModalTitle">Novo projeto</h2><p>Preencha as informações do projeto.</p></div><button class="icon-btn modal-close" data-close="projectModal" aria-label="Fechar" type="button">&times;</button></div>
+<form id="projectForm">
+<input type="hidden" id="projectId">
+<div class="form-group"><label for="projectName">Nome do projeto <span class="required">*</span></label><input type="text" id="projectName" maxlength="80" placeholder="Ex.: Meu portfólio" required></div>
+<div class="form-group"><label for="projectDescription">Descrição</label><textarea id="projectDescription" rows="4" maxlength="500" placeholder="Descreva brevemente seu projeto..."></textarea></div>
+<div class="form-actions"><button class="btn btn-outline" data-close="projectModal" type="button">Cancelar</button><button class="btn btn-primary" type="submit">Salvar projeto</button></div>
+</form>
+</div>
+</div>
+<div class="modal-backdrop hidden" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+<div class="modal">
+<div class="modal-header"><div><h2 id="taskModalTitle">Nova tarefa</h2><p>Organize as atividades do seu projeto.</p></div><button class="icon-btn modal-close" data-close="taskModal" aria-label="Fechar" type="button">&times;</button></div>
+<form id="taskForm">
+<input type="hidden" id="taskId">
+<div class="form-group"><label for="taskTitle">Título da tarefa <span class="required">*</span></label><input type="text" id="taskTitle" maxlength="120" placeholder="Ex.: Criar página inicial" required></div>
+<div class="form-group"><label for="taskProject">Projeto <span class="required">*</span></label><select id="taskProject" required><option value="">Selecione um projeto</option></select></div>
+<div class="form-group"><label for="taskDescription">Descrição</label><textarea id="taskDescription" rows="3" maxlength="1000" placeholder="Detalhes da tarefa..."></textarea></div>
+<div class="form-row">
+<div class="form-group"><label for="taskPriority">Prioridade</label><select id="taskPriority"><option value="low">Baixa</option><option value="medium" selected>Média</option><option value="high">Alta</option></select></div>
+<div class="form-group"><label for="taskStatus">Status</label><select id="taskStatus"><option value="todo">A fazer</option><option value="progress">Em andamento</option><option value="done">Concluído</option></select></div>
+</div>
+<div class="form-group"><label for="taskDueDate">Prazo (opcional)</label><input type="date" id="taskDueDate"></div>
+<div class="form-actions"><button class="btn btn-outline" data-close="taskModal" type="button">Cancelar</button><button class="btn btn-primary" type="submit">Salvar tarefa</button></div>
+</form>
+</div>
+</div>
+<div class="modal-backdrop hidden" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+<div class="modal confirm-dialog">
+<div class="modal-header"><div><h2 id="confirmModalTitle">Confirmar ação</h2><p id="confirmMessage">Deseja continuar?</p></div><button class="icon-btn modal-close" data-close="confirmModal" aria-label="Fechar" type="button">&times;</button></div>
+<div class="form-actions"><button class="btn btn-outline" data-close="confirmModal" type="button">Cancelar</button><button class="btn btn-danger" id="confirmAction" type="button">Confirmar</button></div>
+</div>
+</div>
+<div class="toast-container" id="toastContainer" role="status" aria-live="polite"></div>
+</body>
+</html>
